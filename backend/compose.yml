@@ -2,15 +2,10 @@ services:
   springboot-app:
     build: .
     container_name: springboot_app
-    depends_on:
-      - postgres
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database-1.cfy2qk2imp38.ap-southeast-2.rds.amazonaws.com:5432/time_tracker
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: hello1234
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
     ports:
-      - "8081:8080"
-
-volumes:
-  pgdata:
+      - "8080:8080"
