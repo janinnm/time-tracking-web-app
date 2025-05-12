@@ -48,10 +48,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        return ResponseEntity.ok(new ResponseVO(ResultCode.RSC_2000));
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody UserRequest request) {

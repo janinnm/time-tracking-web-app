@@ -24,26 +24,31 @@ public class RecordController {
 
     @PostMapping
     public ResponseEntity<ResponseVO> create(@AuthenticationPrincipal CustomUserDetails userDetails, @RequestBody String request) {
+        logger.info("Calling records/create()");
         return new ResponseEntity<>(new ResponseVO(ResultCode.RSC_2000, recordService.createRecord(userDetails.getUserEntity(), request)), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseVO> update(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id, @RequestBody String request) {
+        logger.info("Calling records/update()");
         return new ResponseEntity<>(new ResponseVO(ResultCode.RSC_2000, recordService.updateRecord(userDetails.getUserEntity(), id, request)), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseVO> delete(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
+        logger.info("Calling records/delete()");
         return new ResponseEntity<>(new ResponseVO(ResultCode.RSC_2000, recordService.deleteRecord(userDetails.getUserEntity(), id)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseVO> getById(@AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long id) {
+        logger.info("Calling records/getById()");
         return new ResponseEntity<>(new ResponseVO(ResultCode.RSC_2000, recordService.getById(userDetails.getUserEntity(), id)), HttpStatus.OK);
     }
 
     @GetMapping
     public ResponseEntity<ResponseVO> getAll(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        logger.info("Calling records/getAll()");
         return new ResponseEntity<>(new ResponseVO(ResultCode.RSC_2000, recordService.getAll(userDetails.getUserEntity())), HttpStatus.OK);
     }
 }

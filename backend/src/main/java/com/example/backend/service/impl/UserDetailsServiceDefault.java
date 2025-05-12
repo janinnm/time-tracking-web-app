@@ -16,14 +16,13 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceDefault implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceDefault.class);
 
     @Autowired
     public UserDetailsServiceDefault(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     }
 
     @Override

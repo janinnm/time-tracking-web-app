@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.LoginRequest;
 import com.example.backend.dto.UserRequest;
 
 public interface AuthService {

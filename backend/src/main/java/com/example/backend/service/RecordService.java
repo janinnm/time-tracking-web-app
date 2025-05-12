@@ -1,7 +1,7 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.RecordResponse;
 import com.example.backend.model.entity.User;
-import com.example.backend.model.entity.UserRecord;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface RecordService {
 
     Object deleteRecord(User user, Long id);
 
-    UserRecord getById(User user, Long id);
+    RecordResponse getById(User user, Long id);
 
-    List<UserRecord> getAll(User user);
+    List<RecordResponse> getAll(User user);
 }

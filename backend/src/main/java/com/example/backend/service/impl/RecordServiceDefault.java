@@ -1,5 +1,8 @@
 package com.example.backend.service.impl;
 
+import com.example.backend.dto.RecordResponse;
+import com.example.backend.enums.ResultCode;
+import com.example.backend.exception.CustomErrorException;
 import com.example.backend.model.entity.Category;
 import com.example.backend.model.entity.User;
 import com.example.backend.repository.CategoryRepository;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.example.backend.model.entity.UserRecord;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,7 +27,9 @@ public class RecordServiceDefault implements RecordService {
 
     @Autowired
     CategoryRepository categoryRepository;
+
     private static final Logger logger = LoggerFactory.getLogger(RecordServiceDefault.class);
+
     @Override
     public Object createRecord(User user, String request) {
 
@@ -30,15 +37,18 @@ public class RecordServiceDefault implements RecordService {
             request = request.substring(1, request.length() - 1);
         }
 
-        String[] parts = request.split(" ", 4); // Split into max 4 parts
+        String[] parts = request.split(" ", 4);
+
+        if (parts.length < 4) {
+            throw new CustomErrorException(ResultCode.RSC_4001);
+        }
 
         int number = Integer.parseInt(parts[0]);
-        String unit = parts[1];
-        String categoryStr = parts[2].replaceFirst("^#", "");
+        String categoryStr = parts[2].replaceFirst("^#", "").toLowerCase();
         String title = parts[3];
 
         Category category;
-        if (!categoryRepository.existsByName(categoryStr)) {
+        if (!categoryRepository.existsByNameIgnoreCase(categoryStr)) {
             category = Category.builder()
                     .name(categoryStr)
                     .build();
@@ -70,13 +80,17 @@ public class RecordServiceDefault implements RecordService {
 
         String[] parts = request.split(" ", 4); // Split into max 4 parts
 
+        if (parts.length < 4) {
+            throw new CustomErrorException(ResultCode.RSC_4001);
+        }
+
+
         int number = Integer.parseInt(parts[0]);
-        String unit = parts[1];
-        String categoryStr = parts[2].replaceFirst("^#", "");
+        String categoryStr = parts[2].replaceFirst("^#", "").toLowerCase();
         String title = parts[3];
 
         Category category;
-        if (!categoryRepository.existsByName(categoryStr)) {
+        if (!categoryRepository.existsByNameIgnoreCase(categoryStr)) {
             category = Category.builder()
                     .name(categoryStr)
                     .build();
@@ -106,14 +120,41 @@ public class RecordServiceDefault implements RecordService {
     }
 
     @Override
-    public UserRecord getById(User user, Long id) {
+    public RecordResponse getById(User user, Long id) {
 
-        return recordRepository.findUserRecordByRecordId(id);
+        UserRecord record = recordRepository.findUserRecordByRecordId(id);
+
+        return RecordResponse.builder()
+                .recordId(record.getRecordId())
+                .userId(record.getUser().getUserId())
+                .username(record.getUser().getUsername())
+                .categoryId(record.getCategory().getCategoryId())
+                .categoryName(record.getCategory().getName())
+                .title(record.getTitle())
+                .hours(record.getHours())
+                .date(LocalDate.from(record.getDate()))
+                .build();
     }
 
     @Override
-    public List<UserRecord> getAll(User user) {
+    public List<RecordResponse> getAll(User user) {
 
-        return recordRepository.findAllByUser(user);
+        List<UserRecord> recordList = recordRepository.findAllByUser(user);
+        List<RecordResponse> recordResponses = new ArrayList<>();
+        for (UserRecord record : recordList) {
+            RecordResponse recordResponse = RecordResponse.builder()
+                    .recordId(record.getRecordId())
+                    .userId(record.getUser().getUserId())
+                    .username(record.getUser().getUsername())
+                    .categoryId(record.getCategory().getCategoryId())
+                    .categoryName(record.getCategory().getName())
+                    .title(record.getTitle())
+                    .hours(record.getHours())
+                    .date(LocalDate.from(record.getDate()))
+                    .build();
+            recordResponses.add(recordResponse);
+        }
+
+        return recordResponses;
     }
 }
