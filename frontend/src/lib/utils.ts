@@ -10,16 +10,21 @@ export function groupRecords(records: Record[], groupBy: 'date' | 'project' | 'b
   const grouped: { [key: string]: number } = {};
 
   records.forEach((record) => {
-    const dateStr = new Date(record.date.join('-')).toLocaleDateString();
-    const project = record.category.name;
+    const project = record.categoryName;
+    const date = record.date.toISOString().slice(0, 10);
 
     let key = '';
-    if (groupBy === 'date') key = dateStr;
-    else if (groupBy === 'project') key = project;
-    else key = `${project} - ${dateStr}`;
+    if (groupBy === 'date') {
+      key = date;
+    } else if (groupBy === 'project') {
+      key = project;
+    } else {
+      key = `${project} - ${date}`;
+    }
 
     grouped[key] = (grouped[key] || 0) + record.hours;
   });
 
   return Object.entries(grouped).map(([key, hours]) => ({ label: key, hours }));
 }
+

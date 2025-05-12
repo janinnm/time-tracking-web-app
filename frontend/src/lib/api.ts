@@ -1,3 +1,5 @@
+import { json } from "stream/consumers";
+
 const BASE_URL = 'http://localhost:8080';
 
 export async function login(username: string, password: string) {
@@ -47,23 +49,22 @@ export async function checkAuth() {
 }
 
 
-export async function signup(username: string, password: string, email: string) {
+export async function signup(username: string, password: string, email: string, role: string) {
   const res = await fetch(`${BASE_URL}/auth/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, password, email }),
+    body: JSON.stringify({ username, password, email, role }),
   });
 
   const data = await res.json();
-  if (res.ok && data?.resultCode === 'RSC_2000') {
+  if (res.ok) {
     return data.result;
   }
 
   throw new Error(data?.message || 'Signup failed');
 }
-
 
 export const createRecord = async (recordData: string) => {
   const token = localStorage.getItem('authToken');
@@ -81,12 +82,17 @@ export const createRecord = async (recordData: string) => {
     },
   });
 
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : {};
+
   if (!response.ok) {
-    throw new Error('Failed to create record');
+    const errorMessage = data.message || 'Failed to create record';
+    throw new Error(errorMessage);
   }
 
-  return response.json();
+  return data;
 };
+
 
 
 export const updateRecord = async (recordId: number, recordData: string) => {
@@ -186,7 +192,3 @@ export const getAllRecords = async () => {
   return result.data;
 };
 
-
-export const logout = () => {
-  localStorage.removeItem('authToken');
-};

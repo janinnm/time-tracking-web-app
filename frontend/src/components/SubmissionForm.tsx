@@ -1,29 +1,37 @@
 'use client';
-import { useState } from "react";
-import { createRecord } from "@/lib/api";
+import { useState } from 'react';
 
-export default function SubmissionForm() {
-  const [input, setInput] = useState("");
-  const [message, setMessage] = useState("");
+type Props = {
+  onSubmit: (input: string) => Promise<void>;
+  message: string;
+  error: string;
+  setMessage: (msg: string) => void;
+  setError: (msg: string) => void;
+};
+
+export default function SubmissionForm({
+  onSubmit,
+  error,
+  message,
+  setMessage,
+  setError,
+}: Props) {
+  const [input, setInput] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
-
-    try {
-      await createRecord(input.trim());
-      setMessage("✅ Submission successful!");
-      setInput("");
-    } catch (error) {
-      console.error("Error submitting:", error);
-      setMessage("❌ Failed to submit.");
-    }
+    setMessage('');
+    setError('');
+    await onSubmit(input.trim());
   };
 
   return (
     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
       <h2 className="text-lg font-semibold text-gray-800 mb-3">Submit Entry</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3"
+      >
         <input
           type="text"
           value={input}
@@ -38,9 +46,8 @@ export default function SubmissionForm() {
           Submit
         </button>
       </form>
-      {message && (
-        <p className="mt-3 text-sm text-gray-600">{message}</p>
-      )}
+      {message && <p className="mt-3 text-sm text-green-600">{message}</p>}
+      {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
     </div>
   );
 }

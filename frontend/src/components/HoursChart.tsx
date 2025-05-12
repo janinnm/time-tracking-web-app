@@ -25,9 +25,21 @@ interface HoursChartProps {
   records: Record[];
 }
 
+const normalizeDateToUTC = (date: string | Date): Date => {
+  const normalizedDate = new Date(date);
+  normalizedDate.setDate(normalizedDate.getDate() + 1);
+  return normalizedDate;
+};
+
 export default function HoursChart({ records }: HoursChartProps) {
   const [groupBy, setGroupBy] = useState<'date' | 'project' | 'both'>('date');
-  const groupedData = groupRecords(records, groupBy);
+
+  const normalizedRecords = records.map((record) => ({
+    ...record,
+    date: normalizeDateToUTC(record.date),
+  }));
+
+  const groupedData = groupRecords(normalizedRecords, groupBy);
 
   return (
     <Card className="bg-white text-gray-800 border border-gray-200 shadow-sm mt-6">
