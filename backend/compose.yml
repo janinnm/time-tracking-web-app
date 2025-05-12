@@ -1,11 +1,28 @@
 services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: time_tracker
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: hello1234
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
   springboot-app:
     build: .
     container_name: springboot_app
+    depends_on:
+      - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-1.cfy2qk2imp38.ap-southeast-2.rds.amazonaws.com:5432/time_tracker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/time_tracker
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: hello1234
       SPRING_JPA_HIBERNATE_DDL_AUTO: validate
     ports:
-      - "8080:8080"
+      - "8081:8080"
+
+volumes:
+  pgdata:
