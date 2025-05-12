@@ -1,5 +1,3 @@
-import { json } from "stream/consumers";
-
 const BASE_URL = 'http://localhost:8080';
 
 export async function login(username: string, password: string) {
